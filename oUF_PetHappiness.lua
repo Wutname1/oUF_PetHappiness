@@ -111,6 +111,8 @@ local function Enable(self)
 		if (self.unit == 'pet') then
 			self:RegisterEvent('UNIT_HAPPINESS', Path, true)
 			self:RegisterEvent('PET_UI_UPDATE', Path, true)
+		else
+			return
 		end
 
 		if not element.texture then
