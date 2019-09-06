@@ -1,7 +1,7 @@
 ## Interface: 11302
 ## Title: oUF_PetHappiness
 ## Author: wutname1
-## X-WoWI-ID: 15852
+## X-WoWI-ID: 25104
 ## Version: 11302.1
 ## Dependencies: oUF
 ## Notes: Class Aura Bars for oUF
