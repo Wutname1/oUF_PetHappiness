@@ -51,39 +51,41 @@ local function Update(self, event)
 	end
 
 	local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
-	local hasPetUI, isHunterPet = HasPetUI()
-	if (not happiness or not isHunterPet) then
-		element:Hide()
-		return
-	end
-	element:Show()
+	local _, hunterPet = HasPetUI()
+	if (hunterPet and happiness) then
+		if (happiness == 1) then
+			element.texture:SetTexCoord(0.375, 0.5625, 0, 0.359375)
+		elseif (happiness == 2) then
+			element.texture:SetTexCoord(0.1875, 0.375, 0, 0.359375)
+		elseif (happiness == 3) then
+			element.texture:SetTexCoord(0, 0.1875, 0, 0.359375)
+		end
 
-	if (happiness == 1) then
-		element.texture:SetTexCoord(0.375, 0.5625, 0, 0.359375)
-	elseif (happiness == 2) then
-		element.texture:SetTexCoord(0.1875, 0.375, 0, 0.359375)
-	elseif (happiness == 3) then
-		element.texture:SetTexCoord(0, 0.1875, 0, 0.359375)
-	end
+		element.tooltip = _G['PET_HAPPINESS' .. happiness]
+		element.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage)
+		if (loyaltyRate < 0) then
+			element.tooltipLoyalty = _G['LOSING_LOYALTY']
+		elseif (loyaltyRate > 0) then
+			element.tooltipLoyalty = _G['GAINING_LOYALTY']
+		else
+			element.tooltipLoyalty = nil
+		end
 
-	element.tooltip = _G['PET_HAPPINESS' .. happiness]
-	element.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage)
-	if (loyaltyRate < 0) then
-		element.tooltipLoyalty = _G['LOSING_LOYALTY']
-	elseif (loyaltyRate > 0) then
-		element.tooltipLoyalty = _G['GAINING_LOYALTY']
+		element:Show()
 	else
-		element.tooltipLoyalty = nil
+		element:Hide()
 	end
 
 	--[[ Callback: PetHappiness:PostUpdate(role)
 	Called after the element has been updated.
 
 	* self - the PetHappiness element
-	* role - the role as returned by [UnitGroupRolesAssigned](http://wowprogramming.com/docs/api/UnitGroupRolesAssigned.html)
+	* unit      - the unit for which the update has been triggered (string)
+	* happiness        - the numerical happiness value of the pet (1 = unhappy, 2 = content, 3 = happy) (number)
+	* damagePercentage - damage modifier, happiness affects this (unhappy = 75%, content = 100%, happy = 125%) (number)
 	--]]
 	if (element.PostUpdate) then
-		return element:PostUpdate(role)
+		return element:PostUpdate(unit, happiness, damagePercentage)
 	end
 end
 
